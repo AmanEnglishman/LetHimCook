@@ -1,14 +1,12 @@
 from django.urls import path
 
-from .views import index, DetailView, products_in_category, all_categories, AddReview, AddStarRating, Search
+from .views import index, AddStarRating, Search, filter_by_category, product_detail, comment_delete
 
 urlpatterns = [
     path('', index, name='home'),
-    path('<int:category_id>/', index, name='category'),
-    path('category/<int:category_id>/', products_in_category, name='products_in_category'),
-    path('all-categories/', all_categories, name='all_categories'),
-    path('product/<int:pk>', DetailView.as_view(), name='product-detail'),
-    path("review/<int:pk>/", AddReview.as_view(), name="add_review"),
+    path('<int:id>', filter_by_category, name=' filter-by-category'),
+    path('product/<int:pk>', product_detail, name='product-detail'),
     path('add-rating/', AddStarRating.as_view(), name='add_star'),
     path('search/', Search.as_view(), name='search'),
+    path('review-delete/<int:id>', comment_delete, name='review-delete')
 ]

@@ -1,19 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from mptt.fields import TreeForeignKey
-from mptt.models import MPTTModel
-
-
-class Category(MPTTModel):
-    name = models.CharField(_('Name'), max_length=50, unique=True)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-
-    def __str__(self):
-        return self.name
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
 
 
 class Brand(models.Model):
@@ -70,13 +58,6 @@ class Product(models.Model):
         related_name='brand_model_products',
         verbose_name=_('Brand Model'),
     )
-
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        related_name='category_products',
-        verbose_name=_('Category'),
-    )
     quantity = models.PositiveIntegerField(
         _('Quantity'),
         default=0,
@@ -131,13 +112,12 @@ class ProductImage(models.Model):
 
 
 class Reviews(models.Model):
-    email = models.EmailField(_('Email'))
-    name = models.CharField(_('Name'), max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     text = models.TextField(_('Text'))
     product = models.ForeignKey(Product, verbose_name='product', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} - {self.product}'
+        return f'{self.user} - {self.product}'
 
     class Meta:
         verbose_name = 'Review'

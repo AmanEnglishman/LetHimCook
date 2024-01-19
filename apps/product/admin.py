@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import (Product,
                      ProductImage,
                      ProductSpecifications,
-                     Category,
                      Brand,
                      BrandModel,
                      Reviews,
@@ -47,11 +46,6 @@ class BrandModelAdmin(admin.ModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
     pass
 
 

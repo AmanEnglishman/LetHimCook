@@ -6,27 +6,27 @@
     <div class="product-details"><!--product-details-->
         <div class="col-sm-5">
             <div class="view-product">
-                <img src="{{ product.images.first.image.url }}" alt=""/>
+                <img src="{{ object.images.first.image.url }}" alt=""/>
             </div>
         </div>
         <div class="col-sm-7">
             <div class="product-information"><!--/product-information-->
                 <img src="" class="newarrival" alt=""/>
-                <h2>{{ product.name }}</h2>
+                <h2>{{ object.name }}</h2>
                 <img src="" alt=""/>
                 <span>
-                    <span> {{ product.price }} $</span>
+                    <span> {{ object.price }} $</span>
                 <div class="choose">
                 <ul class="nav nav-pills">
                     <li>
-                        <form action="{% url 'wishlist-add' product_id=product.id %}" method="post">
+                        <form action="{% url 'wishlist-add' product_id=object.id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-default">
                                 <i class="fa fa-plus-square"></i>Add to wishlist</button>
                         </form>
                     </li>
                     <li>
-                        <form action="{% url 'cart-add' product_id=product.id %}" method="post">
+                        <form action="{% url 'cart-add' product_id=object.id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-default">
                                 <i class="fa fa-plus-square"></i>Add to cart</button>
@@ -36,72 +36,70 @@
             </div>
 
 								</span>
-                <p><b>Brand:</b> {{ product.brand }}</p>
-                <p><b>Model:</b> {{ product.brand_model }}</p>
-                <p><b>Description:</b> {{ product.description }}</p>
+                <p><b>Brand:</b> {{ object.brand }}</p>
+                <p><b>Model:</b> {{ object.brand_model }}</p>
+                <p><b>Description:</b> {{ object.description }}</p>
                 {% for specification in specifications %}
-                    <li>{{ specification.name }}: {{ specification.value }}</li>
+                <li>{{ specification.name }}: {{ specification.value }}</li>
                 {% endfor %}
                 <a href=""><img src="{{ object.image.url }}" class="share img-responsive" alt=""/></a>
             </div><!--/product-information-->
         </div>
-
-        <div class="category-tab shop-details-tab"><!--category-tab-->
-            <div class="col-sm-12">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#reviews" data-toggle="tab">Reviews</a></li>
-                </ul>
-            </div>
-            <div class="tab-content">
-                <div class="tab-pane fade active in" id="reviews">
-                    <div class="col-sm-12">
-                        {% for review in product.reviews_set.all %}
-                            <div class="media">
-                                <a class="pull-left" href="#">
-                                    <img class="media-object" src="path_to_user_avatar" alt="">
-                                </a>
-                                <div class="media-body">
-                                    <ul class="nav nav-pills">
-                                        <li><i class="fa fa-user"></i> {{ review.name }}</li>
-                                    </ul>
-                                    <p>{{ review.text }}</p>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <p>No reviews yet.</p>
-                        {% endfor %}
-
-                        <p><b>Write Your Review</b></p>
-                        <form action="{% url 'add_review' product.id %}" method="post">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Your Name" name="name">
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Email Address" name="email">
-                            </div>
-                            <div class="form-group">
-                                <textarea class="form-control" rows="5" name="text"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </form>
-                        <li>
-                            <form action="{% url 'add_star' %}" method="post" name="rating">
-                                <b>{% trans 'Рейтинг' %}:</b>
-                                {% csrf_token %}
-                                <input type="hidden" value="{{ product.id }}" name="product">
-                                <span class="rating">
+        <li>
+            <form action="{% url 'add_star' %}" method="post" name="rating">
+                <b>{% trans 'Рейтинг' %}:</b>
+                {% csrf_token %}
+                <input type="hidden" value="{{ product.id }}" name="product">
+                <span class="rating">
                                 {% for k, v in star_form.fields.star.choices %}
                                     <input id="rating{{ v }}" type="radio" name="star"
                                            value="{{ k }}">
                                     <label for="rating{{ v }}">{{ k }}</label>
                                 {% endfor %}
                             </span>
-                                <span class="editContent">4.0</span>
-                            </form>
-                        </li>
-                    </div>
+                <span class="editContent">4.0</span>
+            </form>
+        </li>
+        <div class="category-tab shop-details-tab"><!--category-tab-->
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#reviews" data-toggle="tab">Reviews</a></li>
+                </ul>
+            </div>
+            {% for review in reviews %}
+            <div class="media mb-4">
+                <div class="media-body">
+                    <h6><a>{{ review.user.email }}</a>
+                        <small><i>{{ comment.timestamp }}</i></small></h6>
+                    <p>{{ review.text }}</p>
+                    {% if review.user == request.user %}
+                    <a class="review-delete" href="{% url 'review-delete' review.id %}"> X </a>
+                    {% endif %}
                 </div>
+            </div>
+            {% endfor %}
+            <div class="mb-5">
+                {% if request.user.is_authenticated %}
+                <!-- Comment Form -->
+                <div class="bg-secondary rounded p-5">
+                    <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Leave a comment</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="message">Text *</label>
+                            <textarea name="text" id="message" cols="30" rows="5"
+                                      class="form-control border-0"></textarea>
+                        </div>
+                        <div class="form-group mb-0">
+                            <input type="submit" value="Leave Comment"
+                                   class="btn btn-primary py-md-2 px-md-4 font-weight-semi-bold">
+                        </div>
+                    </form>
+                </div>
+                {% else %}
+                <h3 class="text-uppercase mb-4" style="letter-spacing: 5px;">Login for leave comment</h3>
+                {% endif %}
+
             </div>
         </div>
     </div><!--/category-tab-->
