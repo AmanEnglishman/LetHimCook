@@ -39,6 +39,7 @@
                 <p><b>Brand:</b> {{ object.brand }}</p>
                 <p><b>Model:</b> {{ object.brand_model }}</p>
                 <p><b>Description:</b> {{ object.description }}</p>
+                <p><b>Quontity:</b> {{ object.quantity }}</p>
                 {% for specification in specifications %}
                 <li>{{ specification.name }}: {{ specification.value }}</li>
                 {% endfor %}
