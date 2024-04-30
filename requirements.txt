@@ -1,5 +1,5 @@
 crispy-bootstrap4==2023.1
-Django==4.1.2
+Django==5.0.2
 django-crispy-forms==2.1
 django-jazzmin==2.6.0
 django-js-asset==2.2.0
